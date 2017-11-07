@@ -4,6 +4,15 @@ const fs = require('fs');
 const repoOwner = process.argv[2];
 const repoName = process.argv[3];
 
+
+const mkdirSync = function (dirPath) {
+  try {
+    fs.mkdirSync(dirPath)
+  } catch (err) {
+    if (err.code !== 'EEXIST') throw err
+  }
+};
+
 function getRepoContributors(repoOwner, repoName, cb) {
   const options = {
     url: "https://api.github.com/repos/" + repoOwner + "/" + repoName + "/contributors",
@@ -35,8 +44,6 @@ getRepoContributors(repoOwner, repoName, function(err, contributors) {
   contributors.forEach(function(contributor) {
     var url = contributor.avatar_url;
     var filePath = 'avatars/' + contributor.login + '.jpg';
-
-    // console.log(contributor.avatar_url);
     downloadImageByUrl(url, filePath);
   });
 });
